@@ -12,12 +12,6 @@ b.get_light('Hue Play 1')
 
 b.get_light('Hue Play 2')
 
-y1 = b.set_light('Hue Play 1', {'xy': (0.4325035269415173, 0.5007488105282536)})  # 7 Tage
-
-y2 = b.set_light('Hue Play 2', {'xy': (0.4325035269415173, 0.5007488105282536)})  # its
-
-y3 = b.set_light('Hue Play 3', {'xy': (0.4325035269415173, 0.5007488105282536)})  # r-wert
-
 # Get the date from yesterday, so the printout is more organiesd even after a long time of running.
 yesterday = date.today() - timedelta(days=1)
 spl_word = yesterday                        #
