@@ -12,13 +12,13 @@ b.get_light('Hue Play 1')
 
 b.get_light('Hue Play 2')
 
-# Get the date from yesterday, so the printout is more organiesd even after a long time of running.
+# Get the date from yesterday, so the printout is more organiesd even after a longer time of running.
 yesterday = date.today() - timedelta(days=1)
 spl_word = yesterday                        #
 print("Coronazahlen vom: " + str(spl_word), "\n")
 
 # get the API data.
-r = requests.get('Corona API')
+r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/today.json')
 
 print(r.json()['index'][0], "\n")  # print the latest info in the terminal.
 #print("")
