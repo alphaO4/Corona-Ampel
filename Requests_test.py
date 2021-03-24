@@ -4,24 +4,22 @@ import requests
 from datetime import date, timedelta         #Time is important
 import pp
 
-b = Bridge('192.168.2.134')
-b.connect()
-b.get_light('Hue Play 3')
+b = Bridge('192.168.2.134') #IP der Bridge
 
-b.get_light('Hue Play 1')
+b.connect() #Connect to the Bridge, in theory only needs to be done once. but for simplicity I left it to run every execution
 
-b.get_light('Hue Play 2')
+b.get_light('Hue Play 3') #The one Hue Play
 
-# Get the date from yesterday, so the printout is more organiesd even after a longer time of running.
-yesterday = date.today() - timedelta(days=1)
-spl_word = yesterday                        #
-print("Coronazahlen vom: " + str(spl_word), "\n")
+b.get_light('Hue Play 1') #The seconed Hue Play
+
+b.get_light('Hue Play 2') #The third Hue Play
 
 # get the API data.
 r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/today.json')
 
+print(r.json()['index'][0]['datum']) # Get the date for the Data thats being used, so the printout is more organiesd even after a longer time of running.
+
 print(r.json()['index'][0], "\n")  # print the latest info in the terminal.
-#print("")
 
 # 7 tage inzidenz abfragen
 tage = float(r.json()['index'][0]['7_tage_inzidenz'])
@@ -37,8 +35,6 @@ elif tage <= 19:  # wenn unter 20
     print("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GRÜN","\n")
     b.set_light('Hue Play 1','on', True)
     b.set_light('Hue Play 1', {'xy': (0.4091, 0.518)})
-
-
 
 #its_belegung
 its = float(r.json()['index'][0]['its_belegung'])
