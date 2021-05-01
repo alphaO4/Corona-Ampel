@@ -1,7 +1,7 @@
 from phue import Bridge
 import json
 import requests
-from datetime import date, timedelta         #Time is important
+from datetime import date, timedelta, datetime  # Time is important
 import pp
 
 b = Bridge('192.168.2.134') #IP der Bridge
@@ -14,8 +14,13 @@ b.get_light('Hue Play 1') #The seconed Hue Play
 
 b.get_light('Hue Play 2') #The third Hue Play
 
+
+
 # get the API data.
 r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/today.json')
+
+                    #
+print("Daten abgefragt: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S'), "\n")
 
 print(r.json()['index'][0]['datum']) # Get the date for the Data thats being used, so the printout is more organiesd even after a longer time of running.
 
@@ -75,4 +80,8 @@ if float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']) != 0:
  
 
 print("done")
+print("----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------")
+print("")
+
+exit
 #{"id":"877","datum":"2021-01-02","fallzahl":"98109","neue_faelle":"460","genesene":"79050","todesfaelle":"1285","7_tage_inzidenz":"130.7","rel_veraenderung_der_7_tage_inzidenz":"-21","its_belegung":"33.8","4_tage_r_wert_berlin_rki":"0"}],"item":[]}
