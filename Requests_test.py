@@ -57,52 +57,60 @@ def Corona_ampel():
         
 
     #its_belegung
-    its = float(r.json()['index'][0]['its_belegung'])
+    # hole den letzten Wert der its_belegung, der nicht null ist
+    indexx = 0
+    thomas = r.json()['index'][indexx]['its_belegung']
+    print (thomas)
+    while r.json()['index'][indexx]['its_belegung'] == None:
+        indexx = indexx + 1
+    print (indexx)
+    # its = float(r.json()['index'][0]['its_belegung'])
+    its = float(r.json()['index'][indexx]['its_belegung'])
     if its >= 25:
-        data = ("its_belegung -", float(r.json()['index'][0]['7_tage_inzidenz']), "- ROT")
+        data = ("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- ROT")
         logging.info(data)
-        print("its_belegung -", float(r.json()['index'][0]['7_tage_inzidenz']), "- ROT", "\n")
+        print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- ROT", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.675, 0.322)})
         
     elif 15 <= its <= 25:
-        data = ("its_belegung -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GELB")
+        data = ("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GELB")
         logging.info(data)
-        print("its_belegung -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GELB", "\n")
+        print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GELB", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.4682, 0.476)})
 
     elif its <= 14:
-        data = ("its_belegung -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GRUEN")
+        data = ("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GRUEN")
         logging.info(data)
-        print("its_belegung -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GRÜN", "\n")
+        print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GRÜN", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.2083, 0.6713)})
 
-    #R-wert von letzter veränderung
+    #7-tage-hospitalisierung-inzidenz
     index = 1
-    while float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']) == 0:
+    while float(r.json()['index'][index]['7_tage_hosp_inzidenz']) == None:
         index = index + 1
-    if float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']) != 0:
-        rWert = float(r.json()['index'][index]['4_tage_r_wert_berlin_rki'])
-        if rWert >= 1.2:
-            data = ("4_tage_r_wert_berlin_rki -", float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']), "- ROT")
+    if float(r.json()['index'][index]['7_tage_hosp_inzidenz']) != 0:
+        sieben_thi = float(r.json()['index'][index]['7_tage_hosp_inzidenz'])
+        if sieben_thi >= 100:
+            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT")
             logging.info(data)
-            print("4_tage_r_wert_berlin_rki -", float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']), "- ROT","\n")
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT","\n")
             b.set_light('Hue Play 2','on', True)
             b.set_light('Hue Play 2', {'xy': (0.675, 0.322)})
             
-        elif 1.1 <= rWert <= 1.2:
-            data = ("4_tage_r_wert_berlin_rki -", float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']), "- GELB")
+        elif 35 <= sieben_thi < 100:
+            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB")
             logging.info(data)
-            print("4_tage_r_wert_berlin_rki -", float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']), "- GELB","\n")
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB","\n")
             b.set_light('Hue Play 2','on', True)
             b.set_light('Hue Play 2', {'xy': (0.4682, 0.476)})
             
-        elif rWert <= 1.0:
-            data = ("4_tage_r_wert_berlin_rki -", float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']), "- GRUEN")
+        elif sieben_thi < 35:
+            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRUEN")
             logging.info(data)
-            print("4_tage_r_wert_berlin_rki -", float(r.json()['index'][index]['4_tage_r_wert_berlin_rki']), "- GRÜN","\n")
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRÜN","\n")
             b.set_light('Hue Play 2','on', True)
             b.set_light('Hue Play 2', {'xy': (0.2083, 0.6713)})
             
