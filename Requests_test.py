@@ -3,7 +3,7 @@ import json
 import requests
 from datetime import date, timedelta, datetime  # Time is important
 import logging
-from apscheduler.schedulers.blocking import BlockingScheduler
+# from apscheduler.schedulers.blocking import BlockingScheduler
 
 b = Bridge('192.168.2.134') #IP der Bridge
 
@@ -20,7 +20,8 @@ logging.basicConfig(filename='Requests.log',level=logging.INFO, format='%(messag
 def Corona_ampel():
     
     # get the API data.
-    r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/today.json')
+    # r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/today.json')
+    r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionskrankheiten/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/all.json')
 
     abfrage = ("Daten abgefragt: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S')) #Get the Current date, so its better to read. 
     logging.info(abfrage)
@@ -112,8 +113,8 @@ def Corona_ampel():
 
 Corona_ampel()
 
-scheduler = BlockingScheduler()
-scheduler.add_job(Corona_ampel, 'cron', hour=19)
-scheduler.start()
+# scheduler = BlockingScheduler()
+# scheduler.add_job(Corona_ampel, 'cron', hour=19)
+# '''scheduler.start()
 
 #{"id":"877","datum":"2021-01-02","fallzahl":"98109","neue_faelle":"460","genesene":"79050","todesfaelle":"1285","7_tage_inzidenz":"130.7","rel_veraenderung_der_7_tage_inzidenz":"-21","its_belegung":"33.8","4_tage_r_wert_berlin_rki":"0"}],"item":[]}
