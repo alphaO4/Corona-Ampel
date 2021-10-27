@@ -116,3 +116,15 @@ Daten abgefragt: 2021-10-27 00:00:37
 ('its_belegung -', 9.7, '- GRUEN')
 ('7_tage_hosp_inzidenz -', 3.6, '- GRUEN')
 --------------------------------------------------------------------------------------------------------------------------------------------------
+Daten abgefragt: 2021-10-27 20:23:02
+('Raw Data: ', {'id': '1771', 'datum': '2021-10-27', 'fallzahl': None, 'neue_faelle': None, 'genesene': None, 'todesfaelle': None, '7_tage_inzidenz': '124.9', 'rel_veraenderung_der_7_tage_inzidenz': None, '7_tage_hosp_inzidenz': None, 'its_belegung': None})
+('7_tage_inzidenz -', 124.9, '- ROT')
+('its_belegung -', 9.2, '- GELB')
+('7_tage_hosp_inzidenz -', 3.4, '- GRUEN')
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Daten abgefragt: 2021-10-27 20:27:37
+('Raw Data: ', {'id': '1771', 'datum': '2021-10-27', 'fallzahl': None, 'neue_faelle': None, 'genesene': None, 'todesfaelle': None, '7_tage_inzidenz': '124.9', 'rel_veraenderung_der_7_tage_inzidenz': None, '7_tage_hosp_inzidenz': None, 'its_belegung': None})
+('7_tage_inzidenz -', 124.9, '- ROT')
+('7_tage_hosp_inzidenz -', 3.4, '- GRUEN')
+('its_belegung -', 9.2, '- GELB')
+--------------------------------------------------------------------------------------------------------------------------------------------------
