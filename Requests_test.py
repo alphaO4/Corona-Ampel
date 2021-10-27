@@ -20,94 +20,107 @@ logging.basicConfig(filename='Requests.log',level=logging.INFO, format='%(messag
 def Corona_ampel():
     
     # get the API data.
-    # r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionsepidemiologie-infektionsschutz/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/today.json')
     r = requests.get('https://www.berlin.de/lageso/gesundheit/infektionskrankheiten/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/all.json')
 
     abfrage = ("Daten abgefragt: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S')) #Get the Current date, so its better to read. 
     logging.info(abfrage)
     print("Daten abgefragt: " + datetime.now().strftime('%Y-%m-%d %H:%M:%S'), "\n")
 
-    print("Daten vom:", r.json()['index'][0]['datum'], "\n") # Get the date for the Data thats being used, so the printout is more organiesd even after a longer time of running.
+    print("Daten vom:", r.json()['index'][0]['datum'], "\n") # Get the date for the Data thats being used, so the printout is more organised even after a longer time of running.
 
     raw = ("Raw Data: ", r.json()['index'][0])  # print the latest info in the terminal.
     logging.info(raw)
 
-    # 7 tage inzidenz abfragen
-    tage = float(r.json()['index'][0]['7_tage_inzidenz'])
-    if tage >= 30:  # wenn über 30
+    '''
+    7-Tage-Inzidenz
+        Der Indikator steht auf Stufe 1 „grün“ solange die Anzahl der COVID-19-Neuinfektionen pro 100.000 Einwohner*innen in den letzten 7 Tagen unter 35 liegt
+        Der Indikator steht auf Stufe 2 „gelb“, sobald die Anzahl der COVID-19-Neuinfektionen pro 100.000 Einwohner*innen in den letzten 7 Tagen bei mindestens 35 liegt
+        Bei mindestens 100 Neuinfektionen pro 100.000 Einwohner*innen in den letzten 7 Tagen steht der Indikator auf Stufe 3 „rot“.
+    '''
+    sti = float(r.json()['index'][0]['7_tage_inzidenz'])
+    # wenn über 100, dann ist dieser Wert ROT
+    if sti >= 100:
         data = ("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- ROT")
         logging.info(data) 
         print("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- ROT", "\n")
         b.set_light('Hue Play 3','on', True)
         b.set_light('Hue Play 3', {'xy': (0.675, 0.322)})
-        
-    elif 20 <= tage <= 30:  # wenn unter 30
+    # wenn der Wert größer-gleich 35 und kleiner 100 ist, dann ist dieser Wert GELB        
+    elif 35 <= sti <= 100:
         data = ("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GELB")
         logging.info(data)
         print("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GELB", "\n")
         b.set_light('Hue Play 3','on', True)
         b.set_light('Hue Play 3', {'xy': (0.4682, 0.476)})
-        
-    elif tage <= 19:  # wenn unter 20
+    # wenn der Wert kleiner als 35 ist, dann ist dieses Licht GRÜN    
+    elif sti <= 19:  # wenn unter 20
         data = ("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GRUEN")
         logging.info(data)
         print("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GRÜN", "\n")
         b.set_light('Hue Play 3','on', True)
         b.set_light('Hue Play 3', {'xy': (0.2083, 0.6713)})
-        
+    
 
-    #its_belegung
-    # hole den letzten Wert der its_belegung, der nicht null ist
+    '''
+    COVID-19 ITS-Auslastung (Anteil der für COVID-19-Patient*innen benötigten Plätze auf Intensivstationen):
+    Anteil der für COVID-19-Patient*innen benötigten Plätze auf Intensivstationen ist ein Indikator für die Krankheitslast durch COVID-19 und die Auslastung des Gesundheitssystems. Dieser Indikator steht für die Schwere der Infektionsfolgen.
+    - Anteil < 5 %: Indikator auf Stufe 1 „grün“
+    - Anteil = 5 %: Indikator auf Stufe 2 „gelb“
+    - Anteil = 20 %: Indikator auf Stufe 3 „rot“
+    '''
     indexx = 0
-    thomas = r.json()['index'][indexx]['its_belegung']
-    print (thomas)
+    # finde den letzen nicht-null (None) Wert
     while r.json()['index'][indexx]['its_belegung'] == None:
         indexx = indexx + 1
-    print (indexx)
-    # its = float(r.json()['index'][0]['its_belegung'])
     its = float(r.json()['index'][indexx]['its_belegung'])
-    if its >= 25:
+    if its >= 20:
         data = ("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- ROT")
         logging.info(data)
         print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- ROT", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.675, 0.322)})
         
-    elif 15 <= its <= 25:
+    elif 5 <= its < 20:
         data = ("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GELB")
         logging.info(data)
         print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GELB", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.4682, 0.476)})
 
-    elif its <= 14:
+    elif its < 5:
         data = ("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GRUEN")
         logging.info(data)
         print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GRÜN", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.2083, 0.6713)})
-
-    #7-tage-hospitalisierung-inzidenz
+    
+    '''
+    7-Tage-Hospitalisierungs-Inzidenz
+    Die Zahl der Hospitalisierungen pro 100.000 Einwohner*innen in Zusammenhang mit einer SARS-CoV-2 Infektion in den letzten 7 Tagen ist ein Indikator für die Erkrankungsschwere.
+    - Der Indikator steht auf Stufe 1 „grün“ solange die Anzahl der COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen unter 4 liegt
+    - Der Indikator steht auf Stufe 2 „gelb“, sobald die Anzahl der COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen bei mindestens 4 liegt
+    - Bei mindestens 8 COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen steht der Indikator auf Stufe 3 „rot“.
+    '''
     index = 1
     while float(r.json()['index'][index]['7_tage_hosp_inzidenz']) == None:
         index = index + 1
     if float(r.json()['index'][index]['7_tage_hosp_inzidenz']) != 0:
-        sieben_thi = float(r.json()['index'][index]['7_tage_hosp_inzidenz'])
-        if sieben_thi >= 100:
+        sthi = float(r.json()['index'][index]['7_tage_hosp_inzidenz'])
+        if sthi >= 8:
             data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT")
             logging.info(data)
             print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT","\n")
             b.set_light('Hue Play 2','on', True)
             b.set_light('Hue Play 2', {'xy': (0.675, 0.322)})
             
-        elif 35 <= sieben_thi < 100:
+        elif 4 <= sthi < 8:
             data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB")
             logging.info(data)
             print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB","\n")
             b.set_light('Hue Play 2','on', True)
             b.set_light('Hue Play 2', {'xy': (0.4682, 0.476)})
             
-        elif sieben_thi < 35:
+        elif sthi < 4:
             data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRUEN")
             logging.info(data)
             print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRÜN","\n")
@@ -120,9 +133,3 @@ def Corona_ampel():
     logging.info("--------------------------------------------------------------------------------------------------------------------------------------------------")
 
 Corona_ampel()
-
-# scheduler = BlockingScheduler()
-# scheduler.add_job(Corona_ampel, 'cron', hour=19)
-# '''scheduler.start()
-
-#{"id":"877","datum":"2021-01-02","fallzahl":"98109","neue_faelle":"460","genesene":"79050","todesfaelle":"1285","7_tage_inzidenz":"130.7","rel_veraenderung_der_7_tage_inzidenz":"-21","its_belegung":"33.8","4_tage_r_wert_berlin_rki":"0"}],"item":[]}
