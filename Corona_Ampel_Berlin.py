@@ -1,19 +1,17 @@
+
 from phue import Bridge
 import json
 import requests
 from datetime import date, timedelta, datetime  # Time is important
 import logging
-# from apscheduler.schedulers.blocking import BlockingScheduler
 
-b = Bridge('192.168.2.134') #IP der Bridge
+b = Bridge('192.168.2.134') # IP der Hue Bridge
 
-b.connect() #Connect to the Bridge, in theory only needs to be done once, but for simplicity I left it to run every execution
+b.connect() # Connect to the Bridge, in theory only needs to be done once, but for simplicity I left it to run every execution
 
-b.get_light('Hue Play 3') #The one Hue Play
-
-b.get_light('Hue Play 1') #The second Hue Play
-
-b.get_light('Hue Play 2') #The third Hue Play
+b.get_light('Hue Play 1') #The first Hue Play
+b.get_light('Hue Play 2') #The second Hue Play
+b.get_light('Hue Play 3') # The third Hue Play
 
 logging.basicConfig(filename='Requests.log',level=logging.INFO, format='%(message)s')  # logging conf
 
@@ -59,7 +57,38 @@ def Corona_ampel():
         print("7_tage_inzidenz -", float(r.json()['index'][0]['7_tage_inzidenz']), "- GRÜN", "\n")
         b.set_light('Hue Play 3','on', True)
         b.set_light('Hue Play 3', {'xy': (0.2083, 0.6713)})
-    
+
+    '''7-Tage-Hospitalisierungs-Inzidenz
+    Die Zahl der Hospitalisierungen pro 100.000 Einwohner*innen in Zusammenhang mit einer SARS-CoV-2 Infektion in den letzten 7 Tagen ist ein Indikator für die Erkrankungsschwere.
+    - Der Indikator steht auf Stufe 1 „grün“ solange die Anzahl der COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen unter 4 liegt
+    - Der Indikator steht auf Stufe 2 „gelb“, sobald die Anzahl der COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen bei mindestens 4 liegt
+    - Bei mindestens 8 COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen steht der Indikator auf Stufe 3 „rot“.
+    '''
+    index = 1
+    while float(r.json()['index'][index]['7_tage_hosp_inzidenz']) == None:
+        index = index + 1
+    if float(r.json()['index'][index]['7_tage_hosp_inzidenz']) != 0:
+        sthi = float(r.json()['index'][index]['7_tage_hosp_inzidenz'])
+        if sthi >= 8:
+            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT")
+            logging.info(data)
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT","\n")
+            b.set_light('Hue Play 2','on', True)
+            b.set_light('Hue Play 2', {'xy': (0.675, 0.322)})
+            
+        elif 4 <= sthi < 8:
+            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB")
+            logging.info(data)
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB","\n")
+            b.set_light('Hue Play 2','on', True)
+            b.set_light('Hue Play 2', {'xy': (0.4682, 0.476)})
+            
+        elif sthi < 4:
+            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRUEN")
+            logging.info(data)
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRÜN","\n")
+            b.set_light('Hue Play 2','on', True)
+            b.set_light('Hue Play 2', {'xy': (0.2083, 0.6713)})
 
     '''
     COVID-19 ITS-Auslastung (Anteil der für COVID-19-Patient*innen benötigten Plätze auf Intensivstationen):
@@ -93,40 +122,7 @@ def Corona_ampel():
         print("its_belegung -", float(r.json()['index'][indexx]['its_belegung']), "- GRÜN", "\n")
         b.set_light('Hue Play 1','on', True)
         b.set_light('Hue Play 1', {'xy': (0.2083, 0.6713)})
-    
-    '''
-    7-Tage-Hospitalisierungs-Inzidenz
-    Die Zahl der Hospitalisierungen pro 100.000 Einwohner*innen in Zusammenhang mit einer SARS-CoV-2 Infektion in den letzten 7 Tagen ist ein Indikator für die Erkrankungsschwere.
-    - Der Indikator steht auf Stufe 1 „grün“ solange die Anzahl der COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen unter 4 liegt
-    - Der Indikator steht auf Stufe 2 „gelb“, sobald die Anzahl der COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen bei mindestens 4 liegt
-    - Bei mindestens 8 COVID-19-Hospitalisierungen pro 100.000 Einwohner*innen in den letzten 7 Tagen steht der Indikator auf Stufe 3 „rot“.
-    '''
-    index = 1
-    while float(r.json()['index'][index]['7_tage_hosp_inzidenz']) == None:
-        index = index + 1
-    if float(r.json()['index'][index]['7_tage_hosp_inzidenz']) != 0:
-        sthi = float(r.json()['index'][index]['7_tage_hosp_inzidenz'])
-        if sthi >= 8:
-            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT")
-            logging.info(data)
-            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- ROT","\n")
-            b.set_light('Hue Play 2','on', True)
-            b.set_light('Hue Play 2', {'xy': (0.675, 0.322)})
-            
-        elif 4 <= sthi < 8:
-            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB")
-            logging.info(data)
-            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GELB","\n")
-            b.set_light('Hue Play 2','on', True)
-            b.set_light('Hue Play 2', {'xy': (0.4682, 0.476)})
-            
-        elif sthi < 4:
-            data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRUEN")
-            logging.info(data)
-            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRÜN","\n")
-            b.set_light('Hue Play 2','on', True)
-            b.set_light('Hue Play 2', {'xy': (0.2083, 0.6713)})
-            
+              
 
     print("done")
     print("--------------------------------------------------------------------------------------------------------------------------------------------------")
