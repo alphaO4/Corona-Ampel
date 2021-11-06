@@ -8,9 +8,6 @@ import logging
 # The IP of your Hue Bridge
 HUE_BRIDGE_IP = "Philips-hue"
 # Put your Philips Hue API Key for your Bridge into a text file and specify the location here
-API_Key = "NyieKmTUiUTHYVYE-uWq9doiGEuD1omjaqhRZ8T7"
-
-
 
 datei = open('Philips_Hue_API_Key.txt', 'r')
 print(datei)
