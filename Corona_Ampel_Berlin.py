@@ -5,6 +5,16 @@ import requests
 from datetime import date, timedelta, datetime  # Time is important
 import logging
 
+# The IP of your Hue Bridge
+HUE_BRIDGE_IP = "Philips-hue"
+# Put your Philips Hue API Key for your Bridge into a text file and specify the location here
+
+datei = open('Philips_Hue_API_Key.txt', 'r')
+print(datei)
+
+exit(0)
+
+
 b = Bridge('192.168.2.134') # IP der Hue Bridge
 
 b.connect() # Connect to the Bridge, in theory only needs to be done once, but for simplicity I left it to run every execution
@@ -86,7 +96,7 @@ def Corona_ampel():
         elif sthi < 4:
             data = ("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRUEN")
             logging.info(data)
-            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRÜN","\n")
+            print("7_tage_hosp_inzidenz -", float(r.json()['index'][index]['7_tage_hosp_inzidenz']), "- GRUEN","\n")
             b.set_light('Hue Play 2','on', True)
             b.set_light('Hue Play 2', {'xy': (0.2083, 0.6713)})
 
