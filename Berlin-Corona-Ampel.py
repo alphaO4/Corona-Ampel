@@ -1,16 +1,60 @@
-
 from phue import Bridge
 import json
 import requests
 from datetime import date, timedelta, datetime  # Time is important
 import logging
 
-# The IP of your Hue Bridge
-HUE_BRIDGE_IP = "Philips-hue"
-# Put your Philips Hue API Key for your Bridge into a text file and specify the location here
+# DEFINITIONS
+# ===========
 
-datei = open('Philips_Hue_API_Key.txt', 'r')
-print(datei)
+# Enter the IP of your Philips Hue Bridge here if you know it. You can find out the IP in
+# your App under Settings -> Hue Bridges -> Philips hue -> IP Adress. If you don't know it
+# you can try to leave it as it is, in most cases this should work.
+HUE_BRIDGE_IP = "Philips-hue"
+
+# Put your Philips Hue API Key for your Bridge into a text file and specify the location here
+# To create an API Key, you need to do the following:
+# While in your home network go to http://Philips-hue/debug/clip.html and enter in the fields:
+# URL: /api
+# Message Body: {"devicetype":"my_hue_app#my_hue_user"}
+# where 'my_hue_app' is an arbitrary application name and my_hue_user is a user name of your
+# chosing, seperated by '#'. If you don't know what all this means: leave it as it is! :)
+# This will return your API (a long Character-Symbol-Number-String) key which you can now
+# use to connect to the Bridge.'''
+API_KEY_FILE_NAME = "Philips_Hue_API_Key.txt"
+
+# URL of the data
+DATA_URL = 'https://www.berlin.de/lageso/gesundheit/infektionskrankheiten/corona/tabelle-indikatoren-gesamtuebersicht/index.php/index/all.json'
+
+# This function returns the first value in a list that is non-NULL
+def first_none_null(iterable, func=lambda L: L is not None, **kwargs):
+    it = (el for el in iterable if func(el))
+    if 'default' in kwargs:
+        return next(it, kwargs[default])
+    return next(it) # no default so raise 'StopIteration'
+
+
+jsonStr = requests.get(DATA_URL).text
+my_dict = json.loads(jsonStr)
+
+for i in my_dict['index']:
+    print(i['id'],i['datum'],i['fallzahl'],i['neue_faelle'],i['genesene'],i['todesfaelle'],i['7_tage_inzidenz'],i['rel_veraenderung_der_7_tage_inzidenz'],i['7_tage_hosp_inzidenz'],i['its_belegung'])
+
+
+print(type(my_dict))
+print(list(my_dict.values())[3])
+
+
+fval = first_none_null(my_dict.id[0])
+print(fval)
+exit(0)
+
+
+
+
+keyfile = open(API_KEY_FILE_NAME,'r')
+API_KEY = keyfile.read()
+keyfile.close()
 
 exit(0)
 
